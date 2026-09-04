@@ -1,0 +1,16 @@
+name: Import v0.1.0 branch
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import verified Git bundle
+        run: |
+          find .github/bootstrap-data -type f -name 'part-*' -print0 | sort -z | xargs -0 cat | base64 -d > /tmp/adi.bundle
+          git bundle verify /tmp/adi.bundle
+          git fetch /tmp/adi.bundle refs/heads/publish/v0.1.0:refs/remotes/bundle/publish-v0.1.0
+          git push origin refs/remotes/bundle/publish-v0.1.0:refs/heads/publish/v0.1.0
