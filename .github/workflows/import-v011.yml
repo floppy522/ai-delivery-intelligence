@@ -1,0 +1,20 @@
+name: Import v0.1.0 branch diagnostic
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Rebuild bundle
+        run: find .github/bootstrap-data-v2 -type f -name 'part-*' -print0 | sort -z | xargs -0 cat | base64 -d > /tmp/adi.bundle
+      - name: Verify bundle
+        run: git bundle verify /tmp/adi.bundle
+      - name: Fetch feature history
+        run: git fetch /tmp/adi.bundle refs/heads/publish/v0.1.0:refs/remotes/bundle/publish-v0.1.0
+      - name: Publish feature branch
+        run: git push origin refs/remotes/bundle/publish-v0.1.0:refs/heads/publish/v0.1.0
