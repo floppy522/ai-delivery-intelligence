@@ -1,8 +1,11 @@
 FROM python:3.13-slim
 WORKDIR /app
 COPY apps/api/pyproject.toml apps/api/uv.lock /app/apps/api/
-RUN pip install --no-cache-dir uv && uv sync --project /app/apps/api --frozen --no-dev
+RUN pip install --no-cache-dir uv \
+    && uv sync --project /app/apps/api --frozen --no-dev --no-install-project
 COPY apps/api /app/apps/api
+RUN uv sync --project /app/apps/api --frozen --no-dev \
+    && python -c "import adi"
 COPY demo /app/demo
 COPY policies /app/policies
 COPY config /app/config
