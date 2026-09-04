@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: adi
+      POSTGRES_USER: adi
+      POSTGRES_PASSWORD: adi-local-only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U adi -d adi"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - adi-postgres:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      ADI_ROOT: /app
+      ADI_DATABASE_URL: postgresql+asyncpg://adi:adi-local-only@postgres:5432/adi
+      ADI_OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ADI_JIRA_BASE_URL: ${JIRA_BASE_URL:-}
+      ADI_JIRA_EMAIL: ${JIRA_EMAIL:-}
+      ADI_JIRA_TOKEN: ${JIRA_TOKEN:-}
+      ADI_KAITEN_BASE_URL: ${KAITEN_BASE_URL:-}
+      ADI_KAITEN_TOKEN: ${KAITEN_TOKEN:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - ./demo:/app/demo:ro
+      - ./policies:/app/policies:ro
+      - ./config:/app/config:ro
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  adi-postgres:

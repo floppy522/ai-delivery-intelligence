@@ -10,3 +10,5 @@ dist/
 playwright-report/
 test-results/
 evaluation-results.local.json
+*.db
+*.tsbuildinfo

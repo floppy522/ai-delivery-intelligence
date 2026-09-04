@@ -1,0 +1,25 @@
+jira:
+  stages:
+    BACKLOG: [Backlog, Open]
+    ANALYSIS: [Analysis]
+    IN_PROGRESS: [In Progress, Development]
+    VERIFY: [Verify, Testing, Review]
+    DONE: [Done, Closed]
+  relations:
+    "blocks": BLOCKS
+    "is blocked by": BLOCKED_BY
+    "depends on": DEPENDS_ON
+    "is depended on by": DEPENDED_ON_BY
+  custom_fields:
+    blocked_since: null
+    blocker_eta: null
+    entered_stage: null
+
+kaiten:
+  # Column IDs are installation-specific. Configure them after listing a board.
+  stages:
+    BACKLOG: []
+    ANALYSIS: []
+    IN_PROGRESS: []
+    VERIFY: []
+    DONE: []
