@@ -1,0 +1,62 @@
+version: v0.1.0
+ground_truth:
+  change_ids:
+    - change:NS-12:item_completed
+    - change:NS-13:aging_threshold_crossed
+    - change:NS-14:stage_changed
+    - change:NS-15:stage_changed
+    - change:NS-16:aging_threshold_crossed
+    - change:NS-17:stage_changed
+    - change:NS-17:due_date_changed
+    - change:NS-18:aging_threshold_crossed
+    - change:NS-19:stage_changed
+    - change:NS-20:stage_changed
+    - change:NS-21:stage_changed
+    - change:relation:NS-17:BLOCKED_BY:NS-29:appeared
+    - change:relation:NS-19:DEPENDS_ON:NS-29:appeared
+    - change:relation:NS-22:DEPENDS_ON:NS-08:appeared
+    - change:relation:NS-14:BLOCKED_BY:NS-30:resolved
+    - change:wip
+    - change:wip-limit-crossed
+  risk_signal_ids:
+    - signal:wip_limit_exceeded:board
+    - signal:aging_work:demo:NS-13
+    - signal:aging_work:demo:NS-16
+    - signal:verify_queue_aging:demo:NS-18
+    - signal:verify_queue_aging:demo:NS-24
+    - signal:blocker_sla_exceeded:demo:NS-17
+    - signal:blocker_missing_owner:demo:NS-17
+    - signal:blocker_missing_eta:demo:NS-17
+    - signal:dependency_threatens_target:demo:NS-19
+  blocker_signal_ids:
+    - signal:blocker_sla_exceeded:demo:NS-17
+    - signal:blocker_missing_owner:demo:NS-17
+    - signal:blocker_missing_eta:demo:NS-17
+  escalation_signal_ids:
+    - signal:blocker_sla_exceeded:demo:NS-17
+cases:
+  - {id: flow-healthy, category: flow, check: healthy_board}
+  - {id: flow-wip-limit, category: flow, check: wip_exceeded}
+  - {id: flow-aging, category: flow, check: aging_work}
+  - {id: flow-verify-aging, category: flow, check: verify_aging}
+  - {id: flow-throughput-capability, category: flow, check: throughput_limitation}
+  - {id: blocker-within-sla, category: blockers, check: blocker_within_sla}
+  - {id: blocker-beyond-sla, category: blockers, check: blocker_beyond_sla}
+  - {id: blocker-owner-eta, category: blockers, check: blocker_owner_eta}
+  - {id: blocker-resolved, category: blockers, check: blocker_resolved}
+  - {id: dependency-harmless, category: dependencies, check: dependency_harmless}
+  - {id: dependency-threatens, category: dependencies, check: dependency_threatens}
+  - {id: dependency-lifecycle, category: dependencies, check: dependency_lifecycle}
+  - {id: change-stage-completion, category: changes, check: stage_completion}
+  - {id: change-owner, category: changes, check: owner_change}
+  - {id: change-due-date, category: changes, check: due_date_change}
+  - {id: change-wip, category: changes, check: wip_increase}
+  - {id: change-aging-threshold, category: changes, check: aging_threshold}
+  - {id: rag-correct-rule, category: rag, check: correct_policy}
+  - {id: rag-no-policy, category: rag, check: no_policy}
+  - {id: rag-conflicting-policy, category: rag, check: conflicting_policy}
+  - {id: safety-insufficient-evidence, category: safety, check: insufficient_evidence}
+  - {id: safety-unknown-entity, category: safety, check: unknown_entity}
+  - {id: safety-prompt-injection, category: safety, check: prompt_injection}
+  - {id: safety-malformed-output, category: safety, check: malformed_output}
+  - {id: adapters-equivalent-facts, category: adapters, check: adapter_equivalence}
