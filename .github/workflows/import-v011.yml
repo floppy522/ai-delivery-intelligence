@@ -1,20 +1,22 @@
-name: Import v0.1.0 branch diagnostic
+name: Cleanup temporary importer data
+
 on:
   workflow_dispatch:
+
 permissions:
   contents: write
+
 jobs:
-  import:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Rebuild bundle
-        run: find .github/bootstrap-data-v2 -type f -name 'part-*' -print0 | sort -z | xargs -0 cat | base64 -d > /tmp/adi.bundle
-      - name: Verify bundle
-        run: git bundle verify /tmp/adi.bundle
-      - name: Fetch feature history
-        run: git fetch /tmp/adi.bundle refs/heads/publish/v0.1.0:refs/remotes/bundle/publish-v0.1.0
-      - name: Publish feature branch
-        run: git push origin refs/remotes/bundle/publish-v0.1.0:refs/heads/publish/v0.1.0
+      - uses: actions/checkout@v5
+      - name: Remove temporary bundle chunks
+        run: |
+          rm -rf .github/bootstrap-data .github/bootstrap-data-v2
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A .github/bootstrap-data .github/bootstrap-data-v2
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: remove temporary importer data"
+          git push origin HEAD:main
