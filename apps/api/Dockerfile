@@ -5,7 +5,7 @@ RUN pip install --no-cache-dir uv \
     && uv sync --project /app/apps/api --frozen --no-dev --no-install-project
 COPY apps/api /app/apps/api
 RUN uv sync --project /app/apps/api --frozen --no-dev \
-    && python -c "import adi"
+    && /app/apps/api/.venv/bin/python -c "import adi"
 COPY demo /app/demo
 COPY policies /app/policies
 COPY config /app/config
